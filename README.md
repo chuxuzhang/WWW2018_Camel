@@ -6,7 +6,7 @@ Contact: Chuxu Zhang (czhang11@nd.edu)
 
 <2> How to use
 
-(install tensorflow, keras)
+(install tensorflow, keras, de-compress word_embedding.txt.zip)
 
 python Camel.py [parameters]
 
