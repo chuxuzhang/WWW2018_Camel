@@ -31,7 +31,7 @@ content.pkl: paper abstract content (paper_content, paper_content_id)
 
 <4> use data_process.py to generate related data for Camel
 
-small_data.txt: AMiner-T raw data with new (author, paper, venue) map id
+small_data_with_map_id.txt: AMiner-T raw data with new (author, paper, venue) map id
 
 find original data from: https://aminer.org/citation
 
