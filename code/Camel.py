@@ -6,6 +6,9 @@ import utility as U
 from itertools import *
 import argparse
 import os
+import random
+import numpy as np
+
 
 # input arguments
 parser = argparse.ArgumentParser(description='demo code of Camel')
@@ -52,7 +55,7 @@ parser.add_argument('--margin_d', type = float, default = 0.1,
 parser.add_argument('--c_tradeoff', type = float, default = 0.1,
 				   help = 'tradeoff coefficient of augmented component')
 
-parser.add_argument('--data_path', type=str, default='../data',
+parser.add_argument('--data_path', type=str, default='../data/AMiner-T-2013',
 				   help='path to data')
 
 parser.add_argument('--train_test_label', type= int, default = 0,
@@ -61,6 +64,8 @@ parser.add_argument('--train_test_label', type= int, default = 0,
 parser.add_argument('--top_K', type= int, default = 10,
 				   help='length of return list per paper in evaluation')
 
+parser.add_argument('--seed', type= int, default = 100,
+				   help='random seed')
 
 args = parser.parse_args()
 print(args)
@@ -87,9 +92,16 @@ model_path = args.model_path
 
 train_test_label = args.train_test_label
 
+random_seed = args.seed
+
 # data preparation
 input_data = U.input_data(args = args)
 word_embed = input_data.word_embed
+
+# fix seed
+random.seed(random_seed)
+np.random.seed(random_seed)
+tf.set_random_seed(random_seed)
 
 # generate negative author ids in evaluation
 if train_test_label == 2:
@@ -220,7 +232,7 @@ if train_test_label == 0:# train model
 elif train_test_label == 1:# test model
 	with tf.Session(config = tf.ConfigProto(inter_op_parallelism_threads = 2,
 			intra_op_parallelism_threads = 2)) as sess:
-		restore_idx = 20
+		restore_idx = 20 # set restore model idx
 		saver.restore(sess, model_path + "Camel" + str(restore_idx) + ".ckpt")
 
 		# load paper semantic deep embedding by learned rnn encoder
@@ -237,4 +249,5 @@ elif train_test_label == 1:# test model
 		input_data.Camel_evaluate(p_text_deep_f, a_latent_f, top_K)
 else:
 	print "tf graph test finish."
+
 

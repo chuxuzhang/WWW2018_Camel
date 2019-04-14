@@ -7,6 +7,7 @@ import random
 from keras.preprocessing import sequence
 from itertools import *
 
+
 class input_data:
 	def __init__(self, args):
 		self.args = args
@@ -49,7 +50,7 @@ class input_data:
 		# indirect paper-author relation from heterogeneous walk
 		p_a_indir_list_train = [[] for k in range(self.args.paper_num)]
 		def p_a_indir_set(path):
-			indir_relation_f = ["/metapath_walk.txt", "/metapath_walk_2.txt", "/metapath_walk_3.txt"]
+			indir_relation_f = ["/APA_walk.txt", "/APPA_walk.txt", "/APVPA_walk.txt"]
 			#het_walk_f = open(self.args.data_path + "/het_random_walk.txt", "r")
 			for f_index in range(len(indir_relation_f)):
 				f_name = indir_relation_f[f_index]
@@ -71,6 +72,7 @@ class input_data:
 		self.p_a_indir_list_train = p_a_indir_set(self.args.data_path)
 		self.indir_len = sum(len(x) for x in self.p_a_indir_list_train)
 
+
 		def load_p_content(path, word_n = 100000):
 			f = open(path, 'rb')
 			p_content_set = pickle.load(f)
@@ -84,6 +86,7 @@ class input_data:
 			p_content_set = (p_content, p_content_id)
 
 			return p_content_set
+
 
 		def load_word_embed(path, word_n = 54559, word_dim = 128):
 			word_embed = np.zeros((word_n + 2, word_dim))
@@ -101,6 +104,7 @@ class input_data:
 		self.p_content = sequence.pad_sequences(self.p_content, maxlen = self.args.c_len, value = 0., padding = 'post', truncating = 'post') 
 		self.word_embed = load_word_embed(path = self.args.data_path + '/word_embedding.txt')
 
+
 	def p_a_a_dir_next_batch(self):
 		p_a_a_dir_list_batch = []
 		for i in range(self.args.paper_num):
@@ -112,6 +116,7 @@ class input_data:
 				triple=[i, a_pos, a_neg]
 				p_a_a_dir_list_batch.append(triple)
 		return p_a_a_dir_list_batch
+
 
 	def p_a_a_indir_next_batch(self):
 		p_a_a_indir_list_batch = []
@@ -128,12 +133,14 @@ class input_data:
 					p_a_a_indir_list_batch.append(triple)
 		return p_a_a_indir_list_batch
 
+
 	def gen_content_mini_batch(self, triple_batch):
 		p_c_data = []
 		for i in range(len(triple_batch)):
 			c_temp = (self.p_content[triple_batch[i][0]]).reshape(self.args.c_len)
 			p_c_data.append(c_temp)
 		return p_c_data
+
 
 	def gen_evaluate_neg_ids(self):
 		#neg_num = 100
@@ -156,6 +163,7 @@ class input_data:
 				paper_n += 1
 		p_a_neg_ids_f.close()
 		print ("author_n_ave_test: " + str(float(author_n_ave)/paper_n))
+
 
 	def Camel_evaluate(self, p_text_deep_f, a_latent_f, top_K):
 		p_id_map = [0] * self.args.paper_num
@@ -256,12 +264,5 @@ class input_data:
 
 		AUC_ave = AUC_ave / evaluate_p_num
 		print ("AUC_ave: " + str(AUC_ave))
-
-
-
-
-
-
-
 
 
